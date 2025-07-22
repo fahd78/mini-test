@@ -1,16 +1,5 @@
 import pytest
-from app import app, db
-from models import Item
 
-@pytest.fixture
-def client(tmp_path, monkeypatch):
-    # use a temporary SQLite database
-    db_file = tmp_path / 'test.db'
-    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_file}'
-    with app.test_client() as c:
-        with app.app_context():
-            db.create_all()
-        yield c
 
 
 def test_get_nonexistent(client):

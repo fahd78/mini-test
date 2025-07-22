@@ -1,9 +1,5 @@
 import pytest
-from app import app
 
-@pytest.fixture
-def client():
-    return app.test_client()
 
 # SQL injection payloads
 @pytest.mark.parametrize('payload', ["' OR '1'='1", '1; DROP TABLE items;'])

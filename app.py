@@ -1,5 +1,6 @@
 
 from flask import Flask, jsonify, request, abort
+from markupsafe import escape
 from models import db, Item
 from config import Config
 
@@ -7,8 +8,7 @@ app = Flask(__name__)
 app.config.from_object(Config)
 db.init_app(app)
 
-@app.before_first_request
-def create_tables():
+with app.app_context():
     db.create_all()
 
 @app.route('/items', methods=['POST'])
@@ -18,7 +18,7 @@ def create_item():
     qty = data.get('qty')
     if not name or not isinstance(qty, int):
         abort(400)
-    item = Item(name=name, qty=qty)
+    item = Item(name=escape(name), qty=qty)
     db.session.add(item)
     db.session.commit()
     return jsonify({'id': item.id, 'name': item.name, 'qty': item.qty}), 201
@@ -40,7 +40,7 @@ def update_item(item_id):
     name = data.get('name')
     qty = data.get('qty')
     if name:
-        item.name = name
+        item.name = escape(name)
     if isinstance(qty, int):
         item.qty = qty
     db.session.commit()
